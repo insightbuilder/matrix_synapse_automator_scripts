@@ -40,19 +40,25 @@ class Callbacks(object):
         self.client = client
 
     async def ai_message_callback(self, room: MatrixRoom, event: RoomMessageText):
-        # recieved_message = callback recieves the message via event.body
-        # room_id = extracted from room.room_id
+
         recieved_message = event.body
         room_id = room.room_id
+        print(f"The message is from {event.sender}")
+
         promptTemplate = """You are helpful and pleasant assistant, who can process any message 
         by thinking step by step. You are tasked to process the {message}.
         Follows the instructions provided in the message and provide the reply."""
-        prompt = PromptTemplate.from_template(promptTemplate)
-        load_dotenv()
-        processor = prompt | ChatOpenAI(openai_api_key=os.environ.get('OPENAI_API_KEY')) | StrOutputParser()
-        output = processor.invoke({"message": recieved_message})
-        print(f"room_id: {room_id}, chatgpt: {output}")
-        await send_text_message(self.client, room_id, output)
+
+        if event.sender != self.client.user_id:
+            prompt = PromptTemplate.from_template(promptTemplate)
+            load_dotenv()
+
+            processor = prompt | ChatOpenAI(openai_api_key=os.environ.get('OPENAI_API_KEY')) | StrOutputParser()
+            output = processor.invoke({"message": recieved_message})
+
+            print(f"room_id: {room_id}, chatgpt: {output}")
+
+            await send_text_message(self.client, room_id, output)
 
     async def invite_callback(self, room: MatrixRoom, event: InviteMemberEvent):
         print("*******Invite Callback detail Start*********")
