@@ -43,8 +43,7 @@ class Callbacks(object):
 
         recieved_message = event.body
         room_id = room.room_id
-        print(f"The message is from {event.sender}")
-
+ 
         promptTemplate = """You are helpful and pleasant assistant, who can process any message 
         by thinking step by step. You are tasked to process the {message}.
         Follows the instructions provided in the message and provide the reply."""
