@@ -13,9 +13,15 @@ from dotenv import load_dotenv
 
 async def main() -> None:
     load_dotenv()
-    client = AsyncClient(os.environ.get("SERVER"),os.environ.get("USER"))
-    print(await client.login(os.environ.get("PASS")))
-     
+    user = input("Provide the server user id: [@user:dom.sample.in] ")
+    password = input("Provide the password: ") 
+    if user != "":
+        client = AsyncClient(os.environ.get("SERVER"),user)
+        print(await client.login(password))
+    else: 
+        client = AsyncClient(os.environ.get("SERVER"),os.environ.get("USER"))
+        print(await client.login(os.environ.get("PASS")))
+
     sync_data = await client.sync(full_state=True)
     print("Make note of the next_batch token: ", sync_data.next_batch)
 

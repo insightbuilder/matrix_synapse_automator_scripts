@@ -10,8 +10,15 @@ import os
 
 async def main() -> None:
     load_dotenv()
-    client = AsyncClient(os.environ.get("SERVER"),os.environ.get("USER"))
-    print(await client.login(os.environ.get("PASS")))
+    user = input("Provide the server user id: [@user:dom.sample.in] ")
+    password = input("Provide the password: ") 
+    if user != "":
+        client = AsyncClient(os.environ.get("SERVER"),user)
+        print(await client.login(password))
+    else: 
+        client = AsyncClient(os.environ.get("SERVER"),os.environ.get("USER"))
+        print(await client.login(os.environ.get("PASS")))
+
     client.add_event_callback(message_callback, RoomMessageText)
 
     since_token = input("Provide since token if you have: ")

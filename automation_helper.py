@@ -59,7 +59,26 @@ class Callbacks(object):
 
             await send_text_message(self.client, room_id, output)
 
+    async def invite_rejector(self, room:MatrixRoom, event: InviteMemberEvent):
+        """Initiates the rejection of the Room"""
+        print("*******Invite Rejection Start*********")
+        print(f"Message callback from room {room.room_id} recieved this.")
+        print("Event Sender: ", event.sender)
+        print("Display Name: ", event.content['displayname'])
+        if event.membership == "invite":
+            print("Rejecting the invite membership event")
+            await self.client.room_leave(room.room_id)
+            print(f"rejected the room {room.room_id} successfully.")
+     
+    async def invite_display(self, room:MatrixRoom, event: InviteMemberEvent):
+        """Just displays the event sender and the Room ID"""
+        print(f"Message callback from room {room.room_id} recieved this.")
+        print("Event Sender: ", event.sender)
+        print("Display Name: ", event.content['displayname'])
+
+
     async def invite_callback(self, room: MatrixRoom, event: InviteMemberEvent):
+        """Accepts the Room Invite"""
         print("*******Invite Callback detail Start*********")
         print(f"Message callback from room {room.room_id} recieved this.")
         print(f"Event: {event}.")

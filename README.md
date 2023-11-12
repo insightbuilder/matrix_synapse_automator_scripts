@@ -62,3 +62,14 @@ Happy Automating..
     This will save bandwidth, and token charges (if using AI models)
 
     - Updated gbot_msgsender_script with try except block to catch if the file provided is not present
+
+    - Incorporated user password input option in the scripts, if environment variable creates issue
+
+    - Create room_leave_forget script to bulk leave the rooms for a given user
+
+    - Updated the automation_helper.py to include callbacks for invite_rejector and invite_display
+    
+    - Created option in invite_acceptor_script to accept, list or reject the invites under a user name
+
+    - Started printing out the next_batch token in the scripts before performing any action, or callback. 
+    Can use this token as "Since_token" and sync the server from that token time onwards

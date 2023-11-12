@@ -30,23 +30,27 @@ async def main() -> None:
     joinedRooms = await client.joined_rooms()
     room_list = joinedRooms.rooms
     print(room_list, end='\n')
+    decide = input("Choose 1 to exit script, 2 to start leave room script: ")
+    if decide == "1":
+        print("leaving script. Rooms are intact...")
+        await client.close()
+    elif decide == "2":
+        # Provide option to leave and forget a single, list of rooms or all the rooms
+        leave_rooms = input("Enter room ids you want to leave seperated with a ',' or just press enter to leave all rooms :")
+        if leave_rooms != "":
+            if ',' in leave_rooms:
+                leave_list = leave_rooms.split(',')
+                for r_id in leave_list:
+                    print(await client.room_leave(room_id=r_id))
+                    print(await client.room_forget(room_id=r_id))
 
-    # Provide option to leave and forget a single, list of rooms or all the rooms
-    leave_rooms = input("Enter room ids you want to leave seperated with a ',' or just press enter to leave all rooms :")
-    if leave_rooms != "":
-        if ',' in leave_rooms:
-            leave_list = leave_rooms.split(',')
-            for r_id in leave_list:
+        else:
+            for r_id in room_list:
                 print(await client.room_leave(room_id=r_id))
                 print(await client.room_forget(room_id=r_id))
 
-    else:
-        for r_id in room_list:
-            print(await client.room_leave(room_id=r_id))
-            print(await client.room_forget(room_id=r_id))
+        print("Closing the connection to Client. Thanks...")
 
-    print("Closing the connection to Client. Thanks...")
-
-    await client.close()
+        await client.close()
 
 asyncio.run(main())

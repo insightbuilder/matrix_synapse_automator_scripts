@@ -16,18 +16,42 @@ import os
 
 async def main() -> None:
     load_dotenv()
-    client = AsyncClient(os.environ.get("SERVER"),os.environ.get("USER"))
-    print(await client.login(os.environ.get("PASS")))
+    user = input("Provide the server user id: [@user:dom.sample.in] ")
+    password = input("Provide the password: ") 
+    if user != "":
+        client = AsyncClient(os.environ.get("SERVER"),user)
+        print(await client.login(password))
+    else: 
+        client = AsyncClient(os.environ.get("SERVER"),os.environ.get("USER"))
+        print(await client.login(os.environ.get("PASS")))
+
     callback = Callbacks(client)
-    client.add_event_callback(callback.invite_callback, (InviteMemberEvent,))
-    since_token = input("Provide a next_batch token if you have: ")
+    decide = input("Enter 1 if you want to accept Invites, 2 to reject invites or just press enter to list the invites: ")
+    if decide == "1":
+        print("Starting to accept invites\n")
+        client.add_event_callback(callback.invite_callback, (InviteMemberEvent,))
+        since_token = input("Provide a next_batch token if you have: ")
 
-    if since_token:
-        sync_data = await client.sync(full_state=True, since=since_token)
-    else:
+        if since_token:
+            sync_data = await client.sync(full_state=True, since=since_token)
+        else:
+            sync_data = await client.sync(full_state=True)
+
+        print("next_batch_token: ", sync_data.next_batch)
+        await client.close()
+
+    elif decide == "2":
+        print("Starting to reject invites\n")
+        client.add_event_callback(callback.invite_rejector, (InviteMemberEvent))
         sync_data = await client.sync(full_state=True)
+        print("next_batch_token: ", sync_data.next_batch)
+        await client.close()
 
-    print("next_batch_token: ", sync_data.next_batch)
-    await client.close()
+    else:
+        print("Just displaying invites\n")
+        client.add_event_callback(callback.invite_display, (InviteMemberEvent))
+        sync_data = await client.sync(full_state=True)
+        print("next_batch_token: ", sync_data.next_batch)
+        await client.close()
 
 asyncio.run(main())
