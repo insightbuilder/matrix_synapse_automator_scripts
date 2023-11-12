@@ -7,13 +7,20 @@ from automation_helper import send_text_message
 # Script takes the file containing room_ids and sends a single message 
 # to all rooms
  
+import os
+from dotenv import load_dotenv
 
 async def main() -> None:
-    client = AsyncClient("https://max.sample.in", "@demo8:max.sample.in")
-    print(await client.login("pass"))
+    load_dotenv()
+    client = AsyncClient(os.environ.get("SERVER"),os.environ.get("USER"))
+    print(await client.login(os.environ.get("PASS")))
+     
+    sync_data = await client.sync(full_state=True)
+    print("Make note of the next_batch token: ", sync_data.next_batch)
 
-    file_path = input("Provide the path of the file that contains Room_id list: ")
     message_send = input("Provide the message to be sent: ")
+    
+    file_path = input("Provide the path of the file that contains Room_id list: ")
 
     with open(file_path, 'r') as phone:
         number_list = phone.readlines()

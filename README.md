@@ -37,3 +37,26 @@ of homeserver automation.
 These scripts SHOULD NOT be used on production server, if you Don't Know. Output of executing the scripts will be your sole responsibility.
 
 Happy Automating..
+
+### Version Updates
+
+* v0.2 : 12-Nov-2023 : InsightBuilder
+
+    - Worked on the api_viewer.py script to explore the sync() and the sync_forever() methods 
+
+    - Importing python-dotenv module so the user, password and server variables can be accessed from the .env file. 
+    Place the .env file in the root of the folder. .env file example as follows.
+    
+    ''' 
+    .env file:
+    OPENAI_API_KEY="yourKey"
+    SERVER="ur.homeserver.in"
+    USER="@demo:ur.homeserver.in"
+    PASS="1thetd"
+    '''
+    
+    - Added sync_data variable in scripts to get the next_batch token before executing any operation. 
+    The next_batch token can be used when trying to sync messages or invites from a particular token
+    This will save bandwidth, and token charges (if using AI models)
+
+    - Updated gbot_msgsender_script with try except block to catch if the file provided is not present

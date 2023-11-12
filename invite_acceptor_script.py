@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 # Start by importing the requisite modules and classes 
 
 import asyncio
@@ -9,15 +10,24 @@ from time import sleep
 # accept the invites automatically
 # write the room_ids and their displayNames 
 
+from dotenv import load_dotenv
+import os
+
 
 async def main() -> None:
-    client = AsyncClient("https://max.sample.in", "@demo8:max.sample.in")
-    # client = AsyncClient(server, user_id)
-    print(await client.login("pass"))
-
+    load_dotenv()
+    client = AsyncClient(os.environ.get("SERVER"),os.environ.get("USER"))
+    print(await client.login(os.environ.get("PASS")))
     callback = Callbacks(client)
-
     client.add_event_callback(callback.invite_callback, (InviteMemberEvent,))
-    await client.sync_forever(timeout=30000)
+    since_token = input("Provide a next_batch token if you have: ")
+
+    if since_token:
+        sync_data = await client.sync(full_state=True, since=since_token)
+    else:
+        sync_data = await client.sync(full_state=True)
+
+    print("next_batch_token: ", sync_data.next_batch)
+    await client.close()
 
 asyncio.run(main())
