@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 # Start by creating a basic client 
 import asyncio
 from time import sleep

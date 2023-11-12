@@ -30,6 +30,8 @@ Write python scripts for Automating Synapse server opertation, which are simple 
 
 - gbot_msgsender_script : Script that accepts the GmessagesBot Room_Id and sends messages to that room. These messages can be used for commands to gmessagesbot
 
+- room_leave_forget.py : Script to leave a set of rooms or all the rooms for a particular user
+
 The scripts are written with ease of reading, and ease of modifying in mind. These scripts are not tested for all scenarios. To reduce complexity involved user_interactivity, using the
 yaml configuration files, wrappers that abstract the complexity has been avoided. This repo doesn't share any opinion on the style of the code, its just written for improving efficiency
 of homeserver automation.
