@@ -35,8 +35,8 @@ async def main() -> None:
     print("*************************************************")
     message_file = input("Provide the file that contains the message: ")
 
-    with open(message_file, mode="r"):
-        message_send = message_file.read()
+    with open(message_file, mode="r") as msg:
+        message_send = msg.read()
 
     logging.info(f"""Message to be sent is :
                  {message_send}
