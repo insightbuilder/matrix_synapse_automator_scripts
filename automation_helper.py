@@ -70,8 +70,8 @@ class Callbacks(object):
         """Initiates the rejection of the Room"""
         logging.info("*******Invite Rejection Start*********")
         logging.info(f"Message callback from room {room.room_id} recieved this.")
-        logging.info("Event Sender: ", event.sender)
-        logging.info("Display Name: ", event.content['displayname'])
+        logging.info(f"Event Sender: {event.sender}")
+        logging.info(f"Display Name: {event.content['displayname']}")
         if event.membership == "invite":
             logging.info("Rejecting the invite membership event")
             await self.client.room_leave(room.room_id)
@@ -80,8 +80,8 @@ class Callbacks(object):
     async def invite_display(self, room:MatrixRoom, event: InviteMemberEvent):
         """Just displays the event sender and the Room ID"""
         logging.info(f"Message callback from room {room.room_id} recieved this.")
-        logging.info("Event Sender: ", event.sender)
-        logging.info("Display Name: ", event.content['displayname'])
+        logging.info(f"Event Sender: {event.sender}")
+        logging.info(f"Display Name: {event.content['displayname']}")
 
 
     async def invite_callback(self, room: MatrixRoom, event: InviteMemberEvent):
@@ -89,11 +89,11 @@ class Callbacks(object):
         logging.info("*******Invite Callback detail Start*********")
         logging.info(f"Message callback from room {room.room_id} recieved this.")
         logging.info(f"Event: {event}.")
-        logging.info("Event Sender: ", event.sender)
-        logging.info("Event shows membership", event.membership)
+        logging.info(f"Event Sender: {event.sender}")
+        logging.info(f"Event shows membership: {event.membership}")
         logging.info("*******Invite Callback detail End*********")
         if event.membership == "join":
-            logging.info("Display Name: ", event.content['displayname'])
+            logging.info(f"Display Name: {event.content['displayname']}")
         date = datetime.now().strftime("%Y-%m-%d") # date objec
         file_name = f"room_id_displayname_{date}.csv"
 

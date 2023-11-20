@@ -26,7 +26,7 @@ async def main() -> None:
         client = AsyncClient(os.environ.get("SERVER"),user)
         logging.info(await client.login(password))
     else: 
-        client = AsyncClient(os.environ.get("SERVER"),os.environ.get("USER"))
+        client = AsyncClient(os.environ.get("SERVER"),os.environ.get("MATUSER"))
         logging.info(await client.login(os.environ.get("PASS")))
      
     sync_data = await client.sync(full_state=True)

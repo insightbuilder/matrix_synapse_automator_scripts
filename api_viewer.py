@@ -16,7 +16,7 @@ logging.basicConfig(format='%(asctime)s | %(levelname)s | %(message)s',
 async def main():
     load_dotenv()
     server = os.environ.get('SERVER') # "https://max.sample.in"
-    user = os.environ.get("USER") # "@demo:max.sample.in"
+    user = os.environ.get("MATUSER") # "@demo:max.sample.in"
     password = os.environ.gett("PASS") # pass 
 
     config = ClientConfig(store_sync_tokens=True)

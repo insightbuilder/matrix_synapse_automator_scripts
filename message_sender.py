@@ -23,12 +23,12 @@ async def main() -> None:
     if user != "":
         client = AsyncClient(os.environ.get("SERVER"),user)
         logging.info(await client.login(password))
-    else: 
-        client = AsyncClient(os.environ.get("SERVER"),os.environ.get("USER"))
+    else:
+        client = AsyncClient(os.environ.get("SERVER"),os.environ.get("MATUSER"))
         logging.info(await client.login(os.environ.get("PASS")))
 
     sync_data = await client.sync(full_state=True)
-    logging.info("Make note of the next_batch token: ", sync_data.next_batch)
+    logging.info(f"Make note of the next_batch token: {sync_data.next_batch}")
 
     print("************************************************")
     print("Prepare a text file with the message you want to send. Keep it same folder as this script")

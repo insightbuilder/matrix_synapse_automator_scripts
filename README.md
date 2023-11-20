@@ -81,3 +81,12 @@ Happy Automating..
         20-Nov | INFO | message to be shared
     
     - Updated the Message Sender script to read the messages from a file, and then send it to the rooms.
+
+    - Changed the .env format to below version, where USER is changed to MATUSER
+    ''' 
+        .env file:
+        OPENAI_API_KEY="yourKey"
+        SERVER="ur.homeserver.in"
+        MATUSER="@demo:ur.homeserver.in"
+        PASS="1thetd"
+    '''
