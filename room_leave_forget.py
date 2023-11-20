@@ -11,28 +11,34 @@ from automation_helper import send_text_message
 import os
 from dotenv import load_dotenv
 
+import logging
+
+# preparing the logging config
+logging.basicConfig(format='%(asctime)s | %(levelname)s | %(message)s',
+                    datefmt='%d-%b',
+                    level=logging.INFO)
+
 async def main() -> None:
     load_dotenv()
     user = input("Provide the server user id: [@user:dom.sample.in] ")
     password = input("Provide the password: ") 
     if user != "":
         client = AsyncClient(os.environ.get("SERVER"),user)
-        print(await client.login(password))
+        logging.info(await client.login(password))
     else: 
         client = AsyncClient(os.environ.get("SERVER"),os.environ.get("USER"))
-        print(await client.login(os.environ.get("PASS")))
-
+        logging.info(await client.login(os.environ.get("PASS")))
      
     sync_data = await client.sync(full_state=True)
-    print("Make note of the next_batch token: ", sync_data.next_batch)
+    logging.info(f"Make note of the next_batch token: {sync_data.next_batch}")
 
-    # Printing the list of joined rooms 
+    # logging the list of joined rooms 
     joinedRooms = await client.joined_rooms()
     room_list = joinedRooms.rooms
-    print(room_list, end='\n')
+    # logging.info(room_list)
     decide = input("Choose 1 to exit script, 2 to start leave room script: ")
     if decide == "1":
-        print("leaving script. Rooms are intact...")
+        logging.info("leaving script. Rooms are intact...")
         await client.close()
     elif decide == "2":
         # Provide option to leave and forget a single, list of rooms or all the rooms
@@ -41,15 +47,15 @@ async def main() -> None:
             if ',' in leave_rooms:
                 leave_list = leave_rooms.split(',')
                 for r_id in leave_list:
-                    print(await client.room_leave(room_id=r_id))
-                    print(await client.room_forget(room_id=r_id))
+                    logging.info(await client.room_leave(room_id=r_id))
+                    logging.info(await client.room_forget(room_id=r_id))
 
         else:
             for r_id in room_list:
-                print(await client.room_leave(room_id=r_id))
-                print(await client.room_forget(room_id=r_id))
+                logging.info(await client.room_leave(room_id=r_id))
+                logging.info(await client.room_forget(room_id=r_id))
 
-        print("Closing the connection to Client. Thanks...")
+        logging.info("Closing the connection to Client. Thanks...")
 
         await client.close()
 

@@ -73,3 +73,11 @@ Happy Automating..
 
     - Started printing out the next_batch token in the scripts before performing any action, or callback. 
     Can use this token as "Since_token" and sync the server from that token time onwards
+
+* v0.21: 20-Nov-2023 : InsightBuilder
+
+     - Incorporated logging in place of the print statements in all the scripts. The log will have the following 
+     format
+        20-Nov | INFO | message to be shared
+    
+    - Updated the Message Sender script to read the messages from a file, and then send it to the rooms.

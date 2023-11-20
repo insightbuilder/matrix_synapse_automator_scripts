@@ -12,6 +12,12 @@ from dotenv import load_dotenv
 # Script completes following tasks: 
 # Send the dm messages to google messages bot   
 
+import logging
+
+# preparing the logging config
+logging.basicConfig(format='%(asctime)s | %(levelname)s | %(message)s',
+                    datefmt='%d-%b',
+                    level=logging.INFO)
 
 async def main() -> None:
     load_dotenv()
@@ -19,10 +25,10 @@ async def main() -> None:
     password = input("Provide the password: ") 
     if user != "":
         client = AsyncClient(os.environ.get("SERVER"),user)
-        print(await client.login(password))
+        logging.info(await client.login(password))
     else: 
         client = AsyncClient(os.environ.get("SERVER"),os.environ.get("USER"))
-        print(await client.login(os.environ.get("PASS")))
+        logging.info(await client.login(os.environ.get("PASS")))
 
     file_path = input("Provide the path of the file that contains Phone numbers list: ")
 
@@ -35,7 +41,7 @@ async def main() -> None:
         gmsg_bot_room = input("Enter the gmessages bot room_id: '!xxxxxxx:sam.pleserver.com' ") 
 
         sync_data = await client.sync(full_state=True)
-        print("Note down the next_batch token: ", sync_data.next_batch)
+        logging.info(f"Note down the next_batch token: {sync_data.next_batch}")
 
         for num in number_list:
             num = is_ten_digits(num)
@@ -46,12 +52,12 @@ async def main() -> None:
                 # After each dm, sleep for 10 sec, so the server can process
                 sleep(10)
             else:
-                print(f"{num} seems to be invalid phonenumber, skipping it. Kindly re-check and input again.")
+                logging.info(f"{num} seems to be invalid phonenumber, skipping it. Kindly re-check and input again.")
 
         await client.close()
 
     except Exception as e:
-            print(e) 
+            logging.info(e) 
             await client.close()
 
 asyncio.run(main())

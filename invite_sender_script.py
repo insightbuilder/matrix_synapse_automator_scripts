@@ -14,6 +14,12 @@ from uuid import uuid4
 from dotenv import load_dotenv
 import os
 
+import logging
+
+# preparing the logging config
+logging.basicConfig(format='%(asctime)s | %(levelname)s | %(message)s',
+                    datefmt='%d-%b',
+                    level=logging.INFO)
 
 async def main() -> None:
     print(f"The script is created to send invites from different users to a single end user for testing purposes only.")

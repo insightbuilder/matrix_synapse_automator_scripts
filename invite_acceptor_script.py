@@ -13,6 +13,12 @@ from time import sleep
 from dotenv import load_dotenv
 import os
 
+import logging
+
+# preparing the logging config
+logging.basicConfig(format='%(asctime)s | %(levelname)s | %(message)s',
+                    datefmt='%d-%b',
+                    level=logging.INFO)
 
 async def main() -> None:
     load_dotenv()
@@ -20,15 +26,15 @@ async def main() -> None:
     password = input("Provide the password: ") 
     if user != "":
         client = AsyncClient(os.environ.get("SERVER"),user)
-        print(await client.login(password))
+        logging.info(await client.login(password))
     else: 
         client = AsyncClient(os.environ.get("SERVER"),os.environ.get("USER"))
-        print(await client.login(os.environ.get("PASS")))
+        logging.info(await client.login(os.environ.get("PASS")))
 
     callback = Callbacks(client)
     decide = input("Enter 1 if you want to accept Invites, 2 to reject invites or just press enter to list the invites: ")
     if decide == "1":
-        print("Starting to accept invites\n")
+        logging.info("Starting to accept invites\n")
         client.add_event_callback(callback.invite_callback, (InviteMemberEvent,))
         since_token = input("Provide a next_batch token if you have: ")
 
@@ -37,21 +43,21 @@ async def main() -> None:
         else:
             sync_data = await client.sync(full_state=True)
 
-        print("next_batch_token: ", sync_data.next_batch)
+        logging.info(f"next_batch_token: {sync_data.next_batch}")
         await client.close()
 
     elif decide == "2":
-        print("Starting to reject invites\n")
+        logging.info("Starting to reject invites\n")
         client.add_event_callback(callback.invite_rejector, (InviteMemberEvent))
         sync_data = await client.sync(full_state=True)
-        print("next_batch_token: ", sync_data.next_batch)
+        logging.info(f"next_batch_token: {sync_data.next_batch}")
         await client.close()
 
     else:
-        print("Just displaying invites\n")
+        logging.info("Just displaying invites\n")
         client.add_event_callback(callback.invite_display, (InviteMemberEvent))
         sync_data = await client.sync(full_state=True)
-        print("next_batch_token: ", sync_data.next_batch)
+        logging.info(f"next_batch_token: {sync_data.next_batch}")
         await client.close()
 
 asyncio.run(main())
