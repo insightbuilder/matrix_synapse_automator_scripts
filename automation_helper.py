@@ -33,11 +33,12 @@ async def message_callback(room: MatrixRoom, event: RoomMessageText) -> None:
         f"{room.user_name(event.sender)} | {event.body}"
     )
     date = datetime.now().strftime("%Y-%m-%d") # date objec
+    msg_time = datetime.now().strftime("%H-%M")
     file_name = f"message_collector_{date}.txt"
     # Writing the messages to the file
 
     with open(file_name, 'a+') as msg_fobj:
-        msg_fobj.write(f"{room.display_name},{room.user_name(event.sender)}, {event.body}\n")
+        msg_fobj.write(f"{room.display_name}, {date}, {msg_time}, {room.user_name(event.sender)}, {event.body}\n")
 
 
 class Callbacks(object):

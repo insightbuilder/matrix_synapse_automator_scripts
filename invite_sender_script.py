@@ -24,7 +24,7 @@ logging.basicConfig(format='%(asctime)s | %(levelname)s | %(message)s',
 async def main() -> None:
     print(f"The script is created to send invites from different users to a single end user for testing purposes only.")
     user_id = input("Provide your full user_id: [@user:max.sample.in] ")
-    user = user_id.split(':').replace('@', '')
+    user = user_id.split(':')[0].replace('@', '')
     load_dotenv()
     client = AsyncClient(os.environ.get("SERVER"),user_id)
     print(await client.login(os.environ.get("PASS")))
