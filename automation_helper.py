@@ -30,7 +30,9 @@ async def message_callback(room: MatrixRoom, event: RoomMessageText) -> None:
     """
     logging.info(
         f"Message received in room {room.display_name}\n"
-        f"{room.user_name(event.sender)} | {event.body}"
+        # unix ts is converted to datetime instance, and the formatted to string format, that is required by us
+        # divide the ts with 1000 to make it as seconds
+        f"{room.user_name(event.sender)} | {event.body} | {datetime.fromtimestamp(event.server_timestamp / 1000)}"
     )
     date = datetime.now().strftime("%Y-%m-%d") # date objec
     msg_time = datetime.now().strftime("%H-%M")
@@ -38,7 +40,7 @@ async def message_callback(room: MatrixRoom, event: RoomMessageText) -> None:
     # Writing the messages to the file
 
     with open(file_name, 'a+') as msg_fobj:
-        msg_fobj.write(f"{room.display_name}, {date}, {msg_time}, {room.user_name(event.sender)}, {event.body}\n")
+        msg_fobj.write(f"{room.display_name}, {datetime.fromtimestamp(event.server_timestamp / 1000)}, {room.user_name(event.sender)}, {event.body}\n")
 
 
 class Callbacks(object):
