@@ -42,7 +42,7 @@ Happy Automating..
 
 ### Version Updates
 
-* v0.2 : 12-Nov-2023 : InsightBuilder
+* version 0.1.0 : 12-Nov-2023 : InsightBuilder
 
     - Worked on the api_viewer.py script to explore the sync() and the sync_forever() methods 
 
@@ -74,7 +74,7 @@ Happy Automating..
     - Started printing out the next_batch token in the scripts before performing any action, or callback. 
     Can use this token as "Since_token" and sync the server from that token time onwards
 
-* v0.21: 20-Nov-2023 : InsightBuilder
+* version 0.1.1: 20-Nov-2023 : InsightBuilder
 
      - Incorporated logging in place of the print statements in all the scripts. The log will have the following 
      format
@@ -90,3 +90,9 @@ Happy Automating..
         MATUSER="@demo:ur.homeserver.in"
         PASS="1thetd"
     '''
+
+* version 0.1.2: 07-Dec-2023 : InsightBuilder
+
+    - Updated the docstrings to automate the documentation creation process
+    - Published the package in PyPi ecosystem
+    - Further updates will be shared through the documentation
