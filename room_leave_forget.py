@@ -1,5 +1,9 @@
 #!/usr/bin/python3
-# Start by creating a basic client 
+
+# matrix_synapse_automator_scripts/invite_acceptor_script.py
+
+"""Leaves and forgets a Room."""
+
 import asyncio
 from time import sleep
 from nio import (AsyncClient, RoomSendError)

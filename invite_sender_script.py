@@ -1,6 +1,10 @@
 #!/usr/bin/python3
 # Start by importing the requisite modules and classes 
 
+# matrix_synapse_automator_scripts/invite_sender_scripte.py
+
+"""Sends invites to a user programmatically."""
+
 import asyncio
 from nio import AsyncClient, RoomMessageText, InviteMemberEvent
 from automation_helper import action_room_dm_create

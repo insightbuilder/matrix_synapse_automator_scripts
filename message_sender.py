@@ -1,5 +1,9 @@
 #!/usr/bin/python3
 # Start by creating a basic client 
+
+# matrix_synapse_automator_scripts/api_viewer.py
+
+"""Sends message to a room"""
 import asyncio
 from time import sleep
 from nio import (AsyncClient, RoomSendError)

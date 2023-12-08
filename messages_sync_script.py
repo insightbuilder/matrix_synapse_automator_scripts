@@ -1,5 +1,9 @@
 #!/usr/bin/python3
 # Start by importing the requisite modules and classes 
+
+# matrix_synapse_automator_scripts/api_viewer.py
+
+"""Syncs the events of a user from the server"""
 import asyncio
 from nio import AsyncClient, RoomMessageText
 from automation_helper import message_callback

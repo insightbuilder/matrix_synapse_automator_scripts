@@ -16,7 +16,14 @@ classifiers = [
 ]
 keywords = ["matrix synapse", "homeserver", "matrix server"]
 dependencies = [
-    "matrix-nio[e2e]", markdown, emoji, python_magic, dbus-python, notify2, urllib, pyxdg
+    "matrix-nio[e2e]",
+    "markdown",
+    "emoji",
+    "python_magic",
+    "dbus-python",
+    "notify2",
+    "urllib",
+    "pyxdg"
 ]
 requires-python = ">=3.9"
 
@@ -25,3 +32,6 @@ Homepage = "https://github.com/insightbuilder/matrix_synapse_automator_scripts"
 
 [project.scripts]
 matrix_automator = "matrix_synapse_automator_scripts.__main__:main"
+
+[tools.setuptools]
+py-modules = ["api_viewer", "automation_helper", "gbot_msgsender_script", "invite_acceptor_script", "invite_sender_script", "listen_and_ai_reply", "messages_sync_script", "message_sender", "room_leave_forget"]

@@ -1,4 +1,12 @@
 #!/usr/bin/python3
+# matrix_synapse_automator_scripts/api_viewer.py
+
+"""Explores the objects created by the Matrix Nio framework by interacting
+with your homeserver. 
+
+This modules acts as a playground before you start coding your logic or 
+solve a automation challenge in your home server.
+"""
 import asyncio
 from nio import AsyncClient, SyncResponse, ClientConfig, RoomMessageText
 from automation_helper import message_callback

@@ -1,6 +1,9 @@
 #!/usr/bin/python3
 # Start by importing the requisite modules and classes 
 
+# matrix_synapse_automator_scripts/invite_acceptor_script.py
+
+"""Lists, Accepts or rejects the invites recieved for a user."""
 import asyncio
 from nio import AsyncClient, InviteMemberEvent
 from automation_helper import Callbacks

@@ -1,6 +1,8 @@
 #!/usr/bin/python3
 
-# Start by importing the requisite modules and classes 
+# matrix_synapse_automator_scripts/gbot_msgsender_script.py
+
+"""Script that sends message to the Bots, for automating room invites."""
 
 import asyncio
 from nio import AsyncClient 

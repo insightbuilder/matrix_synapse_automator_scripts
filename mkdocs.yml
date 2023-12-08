@@ -1,0 +1,15 @@
+# mkdocs.yml
+site_name: Matrix Synapse Automator
+
+theme:
+  name: "material"
+
+plugins: 
+  - mkdocstrings
+
+nav:
+  - index.md
+  - reference.md
+  - how-to-guides.md
+  - tutorials.md
+  - explanation.md

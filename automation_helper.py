@@ -1,4 +1,7 @@
-# The helper script for the automator
+# matrix_synapse_automator_scripts/automation_helper.py
+
+"""Provides several functions, classes with callback methods to
+interact with your homeserver using python."""
 
 from typing import List, Dict
 import asyncio
@@ -23,11 +26,17 @@ logging.basicConfig(format='%(asctime)s | %(levelname)s | %(message)s',
                     level=logging.INFO)
 
 async def message_callback(room: MatrixRoom, event: RoomMessageText) -> None:
-    """
-    Message recieved by the user inside the server using the 
-    sync method.
-    Output : room_name,user_name, message_text
-    """
+    """Callback that processes the messages recieved inside the Matrix room 
+ 
+    Args:
+        room: Matrix room from which the message event has to be processed.
+        event: List of room_ids as strings.
+ 
+    Returns:
+        Appends the room_id, event_id, room display_name, event timestamp, and
+        event body to the text file, that is named with the date of processing."""
+
+
     logging.info(
         f"Message received in room {room.display_name}\n"
         # unix ts is converted to datetime instance, and the formatted to string format, that is required by us
@@ -35,22 +44,31 @@ async def message_callback(room: MatrixRoom, event: RoomMessageText) -> None:
         f"{room.user_name(event.sender)} | {event.body} | {datetime.fromtimestamp(event.server_timestamp / 1000)}"
     )
     date = datetime.now().strftime("%Y-%m-%d") # date objec
-    msg_time = datetime.now().strftime("%H-%M")
     file_name = f"message_collector_{date}.txt"
     # Writing the messages to the file
 
     with open(file_name, 'a+') as msg_fobj:
-        msg_fobj.write(f"{room.room_id}, {event.event_id}, {room.display_name}, {datetime.fromtimestamp(event.server_timestamp / 1000)}, {room.user_name(event.sender)}, {event.body}\n")
+        msg_fobj.write(f"{room.room_id}| {event.event_id}| {room.display_name}| {datetime.fromtimestamp(event.server_timestamp / 1000)}| {room.user_name(event.sender)}| {event.body}\n")
 
 
 class Callbacks(object):
-    """Class to pass client to callback method"""
+    """Class initiated with the homeserver client which 
+    gives access to the callback methods, that uses the client 
+    to process the messages, invites."""
     def __init__(self, client):
         """Store the AsyncClient"""
         self.client = client
 
     async def ai_message_callback(self, room: MatrixRoom, event: RoomMessageText):
-
+        """Returns the AI generated reply for the messages recieved in the
+        given room, with the send_text_message function
+        
+        Args:
+            room: Matrix Room in which the AI model is linked
+            event: Room event that contains the data sent by the server
+            
+        Returns:
+            None"""
         recieved_message = event.body
         room_id = room.room_id
  
@@ -69,8 +87,15 @@ class Callbacks(object):
 
             await send_text_message(self.client, room_id, output)
 
-    async def invite_rejector(self, room:MatrixRoom, event: InviteMemberEvent):
-        """Initiates the rejection of the Room"""
+    async def invite_rejector(self, room: MatrixRoom, event: InviteMemberEvent):
+        """Rejects the invite recieved for a logged in user for the given 
+        room. 
+        Args:
+            room: Matrix Room in which the AI model is linked
+            event: Invite member Room event sent by the server
+    
+        Returns:
+            None"""
         logging.info("*******Invite Rejection Start*********")
         logging.info(f"Message callback from room {room.room_id} recieved this.")
         logging.info(f"Event Sender: {event.sender}")
@@ -81,14 +106,32 @@ class Callbacks(object):
             logging.info(f"rejected the room {room.room_id} successfully.")
      
     async def invite_display(self, room:MatrixRoom, event: InviteMemberEvent):
-        """Just displays the event sender and the Room ID"""
+        """Rejects the invite recieved for a logged in user for the given 
+        room. 
+
+        Args:
+            room: matrix room in which the ai model is linked
+            event: invite member room event sent by the server
+ 
+        Returns:
+            none"""
+
         logging.info(f"Message callback from room {room.room_id} recieved this.")
         logging.info(f"Event Sender: {event.sender}")
         logging.info(f"Display Name: {event.content['displayname']}")
 
 
     async def invite_callback(self, room: MatrixRoom, event: InviteMemberEvent):
-        """Accepts the Room Invite"""
+        """Rejects the invite recieved for a logged in user for the given 
+        room.
+
+        Args:
+            room: matrix room in which the ai model is linked
+            event: invite member room event sent by the server
+
+        Returns:
+            None"""
+
         logging.info("*******Invite Callback detail Start*********")
         logging.info(f"Message callback from room {room.room_id} recieved this.")
         logging.info(f"Event: {event}.")
@@ -119,11 +162,12 @@ async def action_room_dm_create(client: AsyncClient, tgt_user, roomAlias, name, 
     where the client is already logged in using the user_name, who is sending the dm.
     Name of the room is created using random numbers, so the existing
     room conflicts are avoided.
-    Arguments:
-    ---------
-    client: AsyncClient: nio client, allows as to query the server
-    credentials: dict: allows to get the user_id of sender, etc
-    user : User to create DM rooms with
+    Args:
+        client: AsyncClient: nio client, allows as to query the server
+        credentials: dict: allows to get the user_id of sender, etc
+        user : User to create DM rooms with
+    Returns:
+        None
     """
     # room_aliases: Created with {user_name}_{uuid}_{date}
     # topic : {user_name}_topic_discussion_{uuid}
@@ -152,11 +196,9 @@ async def action_room_dm_create(client: AsyncClient, tgt_user, roomAlias, name, 
          )
     else:
         logging.info(f"Invite to {tgt_user} succeeded")
- 
 
-async def send_text_message(client, room_id, message):
-    """Sends simple text message to a single room.
-    Need this for sending multiple messages to gmessages room"""
+
+async def send_text_message(client: AsyncClient, room_id: str, message: str):
 
     message = message.strip('\n')
 
@@ -182,8 +224,7 @@ async def send_text_message(client, room_id, message):
 
 
 def is_ten_digits(string):
-    """
-    Checks if a string contains ten numbers only.
+    """Checks if a string contains ten numbers only.
     Args:
       string: The string to check.
     Returns:
@@ -200,12 +241,21 @@ def is_ten_digits(string):
         return string
 
 
-async def action_joined_members(client: AsyncClient, room) -> List[RoomMember]:
+async def action_joined_members(client: AsyncClient, room: str) -> List[RoomMember]:
+    """Return the members joined in a given room
+   
+    Args:
+        client: Roomserver client logged in using username and password
+        room: Room_id in string format
+       
+    Returns:
+        String of member names invited into the room"""
+
     room = room.replace(r"\!", "!")
     resp = await client.joined_members(room)
     if isinstance(resp, JoinedMembersError):
         logging.info(f"Joined members failed with {resp}")
- 
+
     text = resp.room_id
     for member in resp.members:
         text += (";" + member.user_id + ";"
@@ -214,10 +264,17 @@ async def action_joined_members(client: AsyncClient, room) -> List[RoomMember]:
         return text
 
 
-async def action_joined_rooms(client: AsyncClient):
-    """The list of joined rooms will be returned"""
+async def action_joined_rooms(client: AsyncClient) -> List[MatrixRoom]:
+    """Return the list of rooms joined by the user logged into the Client
+  
+    Args:
+        client: Roomserver client logged in using username and password
+      
+    Returns:
+        List of room_id in which the user is part of."""
 
     resp = await client.joined_rooms()
+ 
     if isinstance(resp, JoinedRoomsError):
         logging.info(f"Joined rooms failed with {str(resp)}")
     else:
@@ -225,9 +282,18 @@ async def action_joined_rooms(client: AsyncClient):
 
     return resp.rooms
 
+room_members = Dict[str, List[RoomMember]]
 
-async def return_room_members(client: AsyncClient, rooms_list) -> List[Dict]:
-    """Returns dictionary of room_id:[room_members]"""
+async def return_room_members(client: AsyncClient, rooms_list: List[str]) -> List[room_members]:
+    """Extracts the members of multiple rooms 
+  
+    Args:
+        client: Roomserver client logged in using username and password.
+        rooms_list: List of room_ids as strings.
+    
+    Returns:
+        List of dictionaries of room and its joined members"""
+
     room_members = []
 
     for room in rooms_list:
@@ -237,5 +303,3 @@ async def return_room_members(client: AsyncClient, rooms_list) -> List[Dict]:
         room_members.append({room: joined_members})
 
     return room_members
-
-
