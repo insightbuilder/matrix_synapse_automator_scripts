@@ -24,10 +24,10 @@ async def main() -> None:
     user = input("Provide the server user id: [@user:dom.sample.in] ")
     password = input("Provide the password: ") 
     if user != "":
-        client = AsyncClient(os.environ.get("SERVER"),user)
+        client = AsyncClient(os.environ.get("SERVER"), user)
         logging.info(await client.login(password))
     else: 
-        client = AsyncClient(os.environ.get("SERVER"),os.environ.get("MATUSER"))
+        client = AsyncClient(os.environ.get("SERVER"), os.environ.get("MATUSER"))
         logging.info(await client.login(os.environ.get("PASS")))
 
     client.add_event_callback(message_callback, RoomMessageText)

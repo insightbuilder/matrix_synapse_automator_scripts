@@ -26,7 +26,7 @@ logging.basicConfig(format='%(asctime)s | %(levelname)s | %(message)s',
                     level=logging.INFO)
 
 async def message_callback(room: MatrixRoom, event: RoomMessageText) -> None:
-    """Callback that processes the messages recieved inside the Matrix room 
+    """Callback that processes the messages recieved inside all the Matrix room 
  
     Args:
         room: Matrix room from which the message event has to be processed.
@@ -49,6 +49,34 @@ async def message_callback(room: MatrixRoom, event: RoomMessageText) -> None:
 
     with open(file_name, 'a+') as msg_fobj:
         msg_fobj.write(f"{room.room_id}| {event.event_id}| {room.display_name}| {datetime.fromtimestamp(event.server_timestamp / 1000)}| {room.user_name(event.sender)}| {event.body}\n")
+
+
+async def message_callback_byroom(room: MatrixRoom, event: RoomMessageText, room_id: str) -> None:
+    """Callback that processes the messages recieved inside a specific Matrix room 
+
+    Args:
+        room: Matrix room from which the message event has to be processed.
+        event: List of room_ids as strings.
+        room_id: Specific room for which the messages will be filtered
+
+    Returns:
+        Appends the room_id, event_id, room display_name, event timestamp, and
+        event body to the text file, that is named with the date of processing."""
+
+    if room.room_id == room_id:
+        logging.info(
+            f"Message received in room {room.display_name}\n"
+            # unix ts is converted to datetime instance, and the formatted to string format, that is required by us
+            # divide the ts with 1000 to make it as seconds
+            f"{room.user_name(event.sender)} | {event.body} | {datetime.fromtimestamp(event.server_timestamp / 1000)}"
+        )
+    date = datetime.now().strftime("%Y-%m-%d") # date objec
+    file_name = f"message_collector_{date}.txt"
+    # Writing the messages to the file
+    if room.room_id == room_id:
+        # if the room_id is same as the id you want, then write message to file
+        with open(file_name, 'a+') as msg_fobj:
+            msg_fobj.write(f"{room.room_id}| {event.event_id}| {room.display_name}| {datetime.fromtimestamp(event.server_timestamp / 1000)}| {room.user_name(event.sender)}| {event.body}\n")
 
 
 class Callbacks(object):
