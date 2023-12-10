@@ -16,8 +16,7 @@ from langchain.chat_models import ChatOpenAI
 from langchain.schema import StrOutputParser
 from dotenv import load_dotenv
 import os
-
-
+import json
 import logging
 
 # preparing the logging config
@@ -34,7 +33,7 @@ async def message_callback(room: MatrixRoom, event: RoomMessageText) -> None:
  
     Returns:
         Appends the room_id, event_id, room display_name, event timestamp, and
-        event body to the text file, that is named with the date of processing."""
+        event body to the json file, that is named with the date of processing."""
 
 
     logging.info(
@@ -44,11 +43,17 @@ async def message_callback(room: MatrixRoom, event: RoomMessageText) -> None:
         f"{room.user_name(event.sender)} | {event.body} | {datetime.fromtimestamp(event.server_timestamp / 1000)}"
     )
     date = datetime.now().strftime("%Y-%m-%d") # date objec
-    file_name = f"message_collector_{date}.txt"
+    file_name = f"message_collector_{date}.json"
     # Writing the messages to the file
 
+    json_data = {"room_id": room.room_id,
+                 "event_id": event.event_id,
+                 "display_name": room.display_name,
+                 "timeStamp": datetime.fromtimestamp(event.server_timestamp / 1000),
+                 "user_name": room.user_name(event.sender),
+                 "body": event.body}
     with open(file_name, 'a+') as msg_fobj:
-        msg_fobj.write(f"{room.room_id}| {event.event_id}| {room.display_name}| {datetime.fromtimestamp(event.server_timestamp / 1000)}| {room.user_name(event.sender)}| {event.body}\n")
+        json.dump(json_data, msg_fobj)
 
 
 async def message_callback_byroom(room: MatrixRoom, event: RoomMessageText, room_id: str) -> None:
