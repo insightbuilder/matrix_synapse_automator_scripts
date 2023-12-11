@@ -43,18 +43,19 @@ async def message_callback(room: MatrixRoom, event: RoomMessageText) -> None:
         f"{room.user_name(event.sender)} | {event.body} | {datetime.fromtimestamp(event.server_timestamp / 1000)}"
     )
     date = datetime.now().strftime("%Y-%m-%d") # date objec
-    file_name = f"message_collector_{date}.json"
-    # Writing the messages to the file
+    file_name = f"message_collector_{date}.txt"
 
-    json_data = {"room_id": room.room_id,
+    # Reading and writing the messages to the file
+    with open(file_name, 'a+') as msg_fobj:
+        # loading the data from the file
+        existing_data = {"room_id": room.room_id,
                  "event_id": event.event_id,
                  "display_name": room.display_name,
-                 "timeStamp": datetime.fromtimestamp(event.server_timestamp / 1000),
+                 "timeStamp": str(datetime.fromtimestamp(event.server_timestamp / 1000)),
                  "user_name": room.user_name(event.sender),
                  "body": event.body}
-    with open(file_name, 'a+') as msg_fobj:
-        json.dump(json_data, msg_fobj)
-
+        # Writing the new data into the file, by over-writing the existing data
+        msg_fobj.write(str(existing_data) + ',')
 
 async def message_callback_byroom(room: MatrixRoom, event: RoomMessageText, room_id: str) -> None:
     """Callback that processes the messages recieved inside a specific Matrix room 

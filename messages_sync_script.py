@@ -34,8 +34,14 @@ async def main() -> None:
 
     since_token = input("Provide since token if you have: ")
     if since_token:
-        await client.sync_forever(timeout=30000, full_state=True, 
+        server_data = await client.sync(timeout=30000, full_state=True, 
                                   since=since_token)  # milliseconds
+        next_batch = server_data.next_batch
+        logging.info(f"Next batch token:{next_batch}")
+        client.close()
     else:
-        await client.sync_forever(timeout=30000)  # milliseconds
+        server_data = await client.sync(timeout=30000)  # milliseconds
+        next_batch = server_data.next_batch
+        logging.info(f"Next Batch token: {next_batch}")
+        client.close()
 asyncio.run(main())
