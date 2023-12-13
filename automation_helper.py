@@ -18,7 +18,7 @@ from dotenv import load_dotenv
 import os
 import json
 import logging
-
+import sqlite3
 # preparing the logging config
 logging.basicConfig(format='%(asctime)s | %(levelname)s | %(message)s',
                     datefmt='%d-%b',
@@ -57,33 +57,53 @@ async def message_callback(room: MatrixRoom, event: RoomMessageText) -> None:
         # Writing the new data into the file, by over-writing the existing data
         msg_fobj.write(str(existing_data) + ',')
 
-async def message_callback_byroom(room: MatrixRoom, event: RoomMessageText, room_id: str) -> None:
-    """Callback that processes the messages recieved inside a specific Matrix room 
+async def message_callback_sqlite(room: MatrixRoom, event: RoomMessageText) -> None:
+    """Callback that processes the messages recieved inside a specific Matrix room
+    and writes the data to sqlite database table, whose name includes the date of 
+    data extraction 
 
     Args:
         room: Matrix room from which the message event has to be processed.
         event: List of room_ids as strings.
-        room_id: Specific room for which the messages will be filtered
 
     Returns:
-        Appends the room_id, event_id, room display_name, event timestamp, and
-        event body to the text file, that is named with the date of processing."""
+        Writes the room_id, event_id, room display_name, event timestamp, and
+        event body to the table inside sqlite database."""
 
-    if room.room_id == room_id:
-        logging.info(
-            f"Message received in room {room.display_name}\n"
-            # unix ts is converted to datetime instance, and the formatted to string format, that is required by us
-            # divide the ts with 1000 to make it as seconds
-            f"{room.user_name(event.sender)} | {event.body} | {datetime.fromtimestamp(event.server_timestamp / 1000)}"
-        )
-    date = datetime.now().strftime("%Y-%m-%d") # date objec
-    file_name = f"message_collector_{date}.txt"
-    # Writing the messages to the file
-    if room.room_id == room_id:
-        # if the room_id is same as the id you want, then write message to file
-        with open(file_name, 'a+') as msg_fobj:
-            msg_fobj.write(f"{room.room_id}| {event.event_id}| {room.display_name}| {datetime.fromtimestamp(event.server_timestamp / 1000)}| {room.user_name(event.sender)}| {event.body}\n")
-
+    logging.info(
+        f"Message received in room {room.display_name}\n"
+        # unix ts is converted to datetime instance, and the formatted to string format, that is required by us
+        # divide the ts with 1000 to make it as seconds
+        f"{room.user_name(event.sender)} | {event.body} | {datetime.fromtimestamp(event.server_timestamp / 1000)}"
+    )
+    date = datetime.now().strftime("%Y_%m_%d") # date objec
+    table_name = f"message_table_{date}"
+    # creating database and connecting it
+    conn = sqlite3.connect("matrix_rooms_data.db") 
+    # create connection to the database
+    cursor = conn.cursor()
+    # create the table with above name, proceed further if it is not already created
+    cursor.execute(f"""CREATE TABLE IF NOT EXISTS {table_name}(
+                   id INTEGER PRIMARY KEY AUTOINCREMENT,
+                   room_id TEXT NOT NULL,
+                   event_id TEXT NOT NULL,
+                   room_display_name TEXT NOT NULL,
+                   date_time TEXT NOT NULL,
+                   room_user TEXT NOT NULL,
+                   message_body TEXT NOT NULL
+    )""")
+    # Write the data to the table
+    cursor.execute(f"""INSERT INTO {table_name} (room_id, event_id, room_display_name,
+                    date_time, room_user, message_body) VALUES(?, ?, ?, ?, ?, ?)""",
+                    (room.room_id.replace("!",""), event.event_id, room.display_name, 
+                    str(datetime.fromtimestamp(event.server_timestamp / 1000)), 
+                    room.user_name(event.sender), 
+                    event.body))
+    logging.info(f"Completed writing to {room.room_id} data to table")
+    # commit the data to database through connection
+    conn.commit()
+    # close the connection
+    conn.close()
 
 class Callbacks(object):
     """Class initiated with the homeserver client which 
