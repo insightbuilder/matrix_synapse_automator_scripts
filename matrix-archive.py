@@ -68,7 +68,7 @@ import re
 import sys
 import yaml
 import json
-
+import datetime
 
 DEVICE_NAME = "matrix-archive"
 
@@ -229,13 +229,14 @@ async def write_event(
     if event.sender in room.users:
         # If user is still present in room, include current nickname
         sender_name = f"{room.users[event.sender].display_name} {sender_name}"
+    # serialize_event is a python function that takes the event_payload
     serialize_event = lambda event_payload: yaml.dump(
         [
             {
                 **dict(
                     sender_id=event.sender,
                     sender_name=sender_name,
-                    timestamp=event.server_timestamp,
+                    timestamp=str(datetime.fromtimestamp(event.server_timestamp / 1000)),
                 ),
                 **event_payload,
             }
