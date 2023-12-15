@@ -68,7 +68,7 @@ import re
 import sys
 import yaml
 import json
-import datetime
+from datetime import datetime
 
 DEVICE_NAME = "matrix-archive"
 
@@ -328,6 +328,7 @@ async def write_room_events(client, room):
         ]:
             events_parsed = []
             for event in events:
+                # print(event)
                 try:
                     if not ARGS.no_media:
                         media_dir = mkdir(f"{OUTPUT_DIR}/{room.display_name}_{room.room_id}_media")
@@ -338,6 +339,7 @@ async def write_room_events(client, room):
                         # If user is still present in room, include current nickname
                         sender_name = f"{room.users[event.sender].display_name} {sender_name}"
                         event.source["_sender_name"] = sender_name
+                        event.source['timestamp'] = str(datetime.fromtimestamp(event.source["origin_server_ts"] / 1000))
 
                     # download media if necessary
                     if isinstance(event, (RoomMessageMedia, RoomEncryptedMedia)):
